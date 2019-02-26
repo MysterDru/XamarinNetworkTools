@@ -41,7 +41,8 @@ namespace AndroidNetworkTools
 
 			foreach (string line in getLinesInARPCache())
 			{
-				string[] splitted = line.Split(separator: (string)" +", options: StringSplitOptions.None);
+				var js = new Java.Lang.String(line);
+				string[] splitted = js.Split(" +")
 				if (splitted.Length >= 4 && string.Equals(ip, splitted[0]))
 				{
 					string mac = splitted[3];
@@ -80,7 +81,8 @@ namespace AndroidNetworkTools
 
 			foreach(string line in getLinesInARPCache())
 			{
-				string[] splitted = line.Split(separator: (string)" +", options: StringSplitOptions.None);
+				var js = new Java.Lang.String(line);
+				string[] splitted = js.Split(" +")
 				if (splitted.Length >= 4 && string.Equals(macAddress, splitted[3]))
 				{
 					return splitted[0];
