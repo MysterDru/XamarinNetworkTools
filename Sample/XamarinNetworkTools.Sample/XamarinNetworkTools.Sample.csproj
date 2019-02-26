@@ -14,6 +14,6 @@
     <PackageReference Include="System.Reactive.Linq" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Xamarin.NetworkTools\XamarinNetworkTools.csproj" />
+    <ProjectReference Include="..\..\XamarinNetworkTools\XamarinNetworkTools.csproj" />
   </ItemGroup>
 </Project>

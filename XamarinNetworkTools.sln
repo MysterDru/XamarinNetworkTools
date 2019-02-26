@@ -1,8 +1,6 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "XamarinNetworkTools.Shared", "XamarinNetworkTools.Shared\XamarinNetworkTools.Shared.shproj", "{15AFBE07-553F-4D90-A73C-C277CD97FA57}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinNetworkTools.iOS", "XamarinNetworkTools.iOS\XamarinNetworkTools.iOS.csproj", "{ACE6D0E3-5B03-43E6-BCBB-6A23A00092BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinNetworkTools.Android", "XamarinNetworkTools.Android\XamarinNetworkTools.Android.csproj", "{F6D76510-F103-400C-829B-12BDB8292F40}"
@@ -13,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidNetworkTools", "libs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMLanScanBinding", "libs\MMLanScanBinding\MMLanScanBinding.csproj", "{2C2E424C-4E0B-4EDC-BFB7-4393B395E8F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinNetworkTools", "Xamarin.NetworkTools\XamarinNetworkTools.csproj", "{B07A664F-B9CD-43F4-8157-B6C74C576011}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinNetworkTools", "XamarinNetworkTools\XamarinNetworkTools.csproj", "{B07A664F-B9CD-43F4-8157-B6C74C576011}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{4CDB5796-69A8-4A16-A1AA-137C5572FD82}"
 EndProject
@@ -22,6 +20,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinNetworkTools.Sample.iOS", "Sample\XamarinNetworkTools.Sample.iOS\XamarinNetworkTools.Sample.iOS.csproj", "{F6CBD2D0-843A-44D0-B6A1-F2684C641CC4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinNetworkTools.Sample", "Sample\XamarinNetworkTools.Sample\XamarinNetworkTools.Sample.csproj", "{047D982D-6FED-43B5-B77F-48757B33EFBB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7316AD0F-4B2F-48EF-925F-B65278A091A5}"
+	ProjectSection(SolutionItems) = preProject
+		XamarinNetworkTools.nuspec = XamarinNetworkTools.nuspec
+		README.md = README.md
+		LICENSE = LICENSE
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

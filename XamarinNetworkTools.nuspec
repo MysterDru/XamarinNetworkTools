@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+    <id>XamarinNetworkTools</id>
+    <version>$version$</version>
+    <title>Xamarin Network Tools</title>
+    <authors>Drew Frisk</authors>
+    <owners>Drew Frisk</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Helper library for Xamarin Android &amp; iOS to perform various networking operations</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>xamarin, networking, lan scan, tools, networking tools</tags>
+    </metadata>
+    <dependencies>
+	    <dependency id="System.Reactive.Linq" version="4.0.0" />
+	</dependencies>
+    
+    <!-- Insert below <metadata> element -->
+<files>
+    <!-- Cross-platform reference assemblies -->
+    <file src="XamarinNetworkTools\bin\Release\netstandard2.0\XamarinNetworkTools.dll" target="lib\netstandard2.0\XamarinNetworkTools.dll" />
+    <file src="XamarinNetworkTools\bin\Release\netstandard2.0\XamarinNetworkTools.deps.json" target="lib\netstandard2.0\XamarinNetworkTools.deps.json" />
+
+    <!-- iOS reference assemblies -->
+    <file src="XamarinNetworkTools.iOS\bin\Release\MMLanScanBinding.dll" target="lib\Xamarin.iOS10\MMLanScanBinding.dll" />
+    <file src="XamarinNetworkTools.iOS\bin\Release\XamarinNetworkTools.iOS.dll" target="lib\Xamarin.iOS10\XamarinNetworkTools.iOS.dll" />
+
+    <!-- Android reference assemblies -->
+    <file src="XamarinNetworkTools.Android\bin\Release\AndroidNetworkTools.dll" target="lib\Xamarin.iOS10\AndroidNetworkTools.dll" />
+    <file src="XamarinNetworkTools.Android\bin\Release\XamarinNetworkTools.Android.dll" target="lib\Xamarin.iOS10\XamarinNetworkTools.Android.dll" />
+</files>
+</package>

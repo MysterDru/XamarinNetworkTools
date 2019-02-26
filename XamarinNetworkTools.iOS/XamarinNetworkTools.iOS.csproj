@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\XamarinNetworkTools.Shared\XamarinNetworkTools.Shared.projitems" Label="Shared" Condition="Exists('..\XamarinNetworkTools.Shared\XamarinNetworkTools.Shared.projitems')" />
   <Import Project="..\packages\NuGet.Build.Packaging.0.2.0\build\NuGet.Build.Packaging.props" Condition="Exists('..\packages\NuGet.Build.Packaging.0.2.0\build\NuGet.Build.Packaging.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -62,7 +61,7 @@
       <Project>{2C2E424C-4E0B-4EDC-BFB7-4393B395E8F6}</Project>
       <Name>MMLanScanBinding</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Xamarin.NetworkTools\XamarinNetworkTools.csproj">
+    <ProjectReference Include="..\XamarinNetworkTools\XamarinNetworkTools.csproj">
       <Project>{B07A664F-B9CD-43F4-8157-B6C74C576011}</Project>
       <Name>XamarinNetworkTools</Name>
     </ProjectReference>

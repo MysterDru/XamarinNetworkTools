@@ -22,7 +22,7 @@ namespace XamarinNetworkTools
 					{
 						if (!recievedIps.Contains(device.IP))
 						{
-							recievedIps.Add(device.IP)
+							recievedIps.Add(device.IP);
 							subscriber.OnNext(new NetworkDevice(device.IP, string.IsNullOrEmpty(device.HostName) ? device.IP : device.HostName, device.MacAddress));
 						}
 					},
