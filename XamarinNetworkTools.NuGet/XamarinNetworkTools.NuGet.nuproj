@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.props" Condition="Exists('$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{19F61ECF-7BF2-4221-9AF7-3433A3A31450}</ProjectGuid>
+    <Description>Xamarin Network Tools</Description>
+    <PackageId>XamarinNetworkTools</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Drew Frisk</Authors>
+    <DevelopmentDependency>false</DevelopmentDependency>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Xamarin.NetworkTools</RootNamespace>
+    <UsePartialTypes>false</UsePartialTypes>
+    <AssemblyName>XamarinNetworkTools.NuGet</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <ReleaseVersion>1.0.0</ReleaseVersion>
+    <SynchReleaseVersion>false</SynchReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XamarinNetworkTools.Android\XamarinNetworkTools.Android.csproj">
+      <Project>{F6D76510-F103-400C-829B-12BDB8292F40}</Project>
+      <Name>XamarinNetworkTools.Android</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XamarinNetworkTools.iOS\XamarinNetworkTools.iOS.csproj">
+      <Project>{ACE6D0E3-5B03-43E6-BCBB-6A23A00092BC}</Project>
+      <Name>XamarinNetworkTools.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xamarin.NetworkTools\XamarinNetworkTools.csproj">
+      <Project>{B07A664F-B9CD-43F4-8157-B6C74C576011}</Project>
+      <Name>XamarinNetworkTools</Name>
+      <Private>true</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NuGet.Build.Packaging">
+      <Version>0.2.2</Version>
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.Common.targets" />
+  <Import Project="$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.targets" Condition="Exists('$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.targets')" />
+</Project>
