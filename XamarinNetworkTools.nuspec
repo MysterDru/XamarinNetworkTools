@@ -27,7 +27,6 @@
 		<file src="XamarinNetworkTools\bin\Release\netstandard2.0\XamarinNetworkTools.dll" target="lib\Xamarin.iOS10\XamarinNetworkTools.dll" />
 
 		<!-- Android reference assemblies -->
-		<file src="XamarinNetworkTools.Android\bin\Release\AndroidNetworkTools.dll" target="lib\MonoAndroid10\AndroidNetworkTools.dll" />
 		<file src="XamarinNetworkTools.Android\bin\Release\XamarinNetworkTools.Android.dll" target="lib\MonoAndroid10\XamarinNetworkTools.Android.dll" />
 		<file src="XamarinNetworkTools\bin\Release\netstandard2.0\XamarinNetworkTools.dll" target="lib\MonoAndroid10\XamarinNetworkTools.dll" />
 	</files>

@@ -91,10 +91,6 @@
     <Folder Include="Resources\drawable-xxxhdpi\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\libs\AndroidNetworkTools\AndroidNetworkTools.csproj">
-      <Project>{78B72812-2777-4453-AD60-9702018DA4EB}</Project>
-      <Name>AndroidNetworkTools</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\XamarinNetworkTools.Android\XamarinNetworkTools.Android.csproj">
       <Project>{F6D76510-F103-400C-829B-12BDB8292F40}</Project>
       <Name>XamarinNetworkTools.Android</Name>

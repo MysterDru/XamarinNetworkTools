@@ -1,17 +1,17 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using AndroidNetworkTools;
-using AndroidNetworkTools._Ping;
-using AndroidNetworkTools.Subnet;
+using InternalDroidNetworkTools;
+using InternalDroidNetworkTools._Ping;
+using InternalDroidNetworkTools.Subnet;
 using Java.Lang;
 using Java.Net;
 using Java.Util.Concurrent;
 
-namespace AndroidNetworkTools
+namespace InternalDroidNetworkTools
 {
-	public class SubnetDevices : Java.Lang.Object
+	internal class SubnetDevices : Java.Lang.Object
 	{
 		private int noThreads = 100;
 

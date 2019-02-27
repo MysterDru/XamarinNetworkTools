@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using Java.Net;
 
-namespace AndroidNetworkTools._Ping
+namespace InternalDroidNetworkTools._Ping
 {
-	public class PingResult
+	internal class PingResult
 	{
 		public InetAddress IA { get;}
 

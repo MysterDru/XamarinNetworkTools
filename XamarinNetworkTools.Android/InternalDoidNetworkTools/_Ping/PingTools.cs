@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using Java.Lang;
 using Java.Net;
 
-namespace AndroidNetworkTools._Ping
+namespace InternalDroidNetworkTools._Ping
 {
-	public class PingTools
+	internal class PingTools
 	{
 
 		// This class is not to be instantiated

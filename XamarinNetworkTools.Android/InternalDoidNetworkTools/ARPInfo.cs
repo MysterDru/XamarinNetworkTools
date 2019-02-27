@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using Java.IO;
 using Java.Lang;
 
-namespace AndroidNetworkTools
+namespace InternalDroidNetworkTools
 {
 	/**
 	 * Created by mat on 09/12/15.
@@ -16,7 +16,7 @@ namespace AndroidNetworkTools
 	 * 192.168.18.11    0x1         0x2         00:04:20:06:55:1a     *        eth0
 	 * 192.168.18.36    0x1         0x2         00:22:43:ab:2a:5b     *        eth0
 	 */
-	public class ARPInfo
+	internal class ARPInfo
 	{
 
 		// This class is not to be instantiated

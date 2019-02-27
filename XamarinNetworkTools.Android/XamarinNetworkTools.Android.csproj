@@ -48,19 +48,29 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AndroidNetworkTools.cs" />
+    <Compile Include="InternalDoidNetworkTools\_Ping\PingOptions.cs" />
+    <Compile Include="InternalDoidNetworkTools\_Ping\PingResult.cs" />
+    <Compile Include="InternalDoidNetworkTools\_Ping\PingStats.cs" />
+    <Compile Include="InternalDoidNetworkTools\_Ping\PingTools.cs" />
+    <Compile Include="InternalDoidNetworkTools\Subnet\Device.cs" />
+    <Compile Include="InternalDoidNetworkTools\ARPInfo.cs" />
+    <Compile Include="InternalDoidNetworkTools\IPTools.cs" />
+    <Compile Include="InternalDoidNetworkTools\Ping.cs" />
+    <Compile Include="InternalDoidNetworkTools\SubnetDevices.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\libs\AndroidNetworkTools\AndroidNetworkTools.csproj">
-      <Project>{78B72812-2777-4453-AD60-9702018DA4EB}</Project>
-      <Name>AndroidNetworkTools</Name>
-    </ProjectReference>
     <ProjectReference Include="..\XamarinNetworkTools\XamarinNetworkTools.csproj">
       <Project>{B07A664F-B9CD-43F4-8157-B6C74C576011}</Project>
       <Name>XamarinNetworkTools</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="InternalDoidNetworkTools\" />
+    <Folder Include="InternalDoidNetworkTools\_Ping\" />
+    <Folder Include="InternalDoidNetworkTools\Subnet\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\packages\NuGet.Build.Packaging.0.2.0\build\NuGet.Build.Packaging.targets" Condition="Exists('..\packages\NuGet.Build.Packaging.0.2.0\build\NuGet.Build.Packaging.targets')" />

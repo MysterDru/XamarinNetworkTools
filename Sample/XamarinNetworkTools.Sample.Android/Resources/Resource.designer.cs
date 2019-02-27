@@ -26,7 +26,6 @@ namespace XamarinNetworkTools.Sample.Droid
 		
 		public static void UpdateIdValues()
 		{
-			global::AndroidNetworkTools.Resource.String.library_name = global::XamarinNetworkTools.Sample.Droid.Resource.String.library_name;
 			global::Xamarin.Forms.Platform.Android.Resource.Attribute.actionBarSize = global::XamarinNetworkTools.Sample.Droid.Resource.Attribute.actionBarSize;
 		}
 		
@@ -4058,9 +4057,6 @@ namespace XamarinNetworkTools.Sample.Droid
 			
 			// aapt resource value: 0x7f0a0035
 			public const int character_counter_pattern = 2131361845;
-			
-			// aapt resource value: 0x7f0a003c
-			public const int library_name = 2131361852;
 			
 			// aapt resource value: 0x7f0a0000
 			public const int mr_button_content_description = 2131361792;

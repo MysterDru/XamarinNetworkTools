@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using Java.Net;
 
-namespace AndroidNetworkTools.Subnet
+namespace InternalDroidNetworkTools.Subnet
 {
-	public class Device
+	internal class Device
 	{
 		public string IP;
 		public string HostName;

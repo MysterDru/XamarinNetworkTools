@@ -1,7 +1,7 @@
-using System;
-namespace AndroidNetworkTools._Ping
+﻿using System;
+namespace InternalDroidNetworkTools._Ping
 {
-	public class PingOptions
+	internal class PingOptions
 	{
 		private int timeoutMillis;
 		private int timeToLive;

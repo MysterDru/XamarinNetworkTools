@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using Java.Net;
 
-namespace AndroidNetworkTools._Ping
+namespace InternalDroidNetworkTools._Ping
 {
-	public class PingStats
+	internal class PingStats
 	{
 		private readonly InetAddress ia;
 		private readonly long noPings;

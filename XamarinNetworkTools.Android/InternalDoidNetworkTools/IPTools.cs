@@ -4,9 +4,9 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Java.Net;
 
-namespace AndroidNetworkTools
+namespace InternalDroidNetworkTools
 {
-	public static class IPTools
+	internal static class IPTools
 	{
 		public static bool isIPv4Address(string address)
 		{

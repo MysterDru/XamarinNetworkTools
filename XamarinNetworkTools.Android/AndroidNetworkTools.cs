@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using AndroidNetworkTools;
-using AndroidNetworkTools._Ping;
-using AndroidNetworkTools.Subnet;
+using InternalDroidNetworkTools;
+using InternalDroidNetworkTools._Ping;
+using InternalDroidNetworkTools.Subnet;
 using Java.Net;
-using static AndroidNetworkTools.SubnetDevices;
 
 namespace XamarinNetworkTools
 {
@@ -15,14 +14,14 @@ namespace XamarinNetworkTools
 	{
 		public static void Init() { }
 
-		public static string LocalIPAddress => global::AndroidNetworkTools.IPTools.getLocalIPv4Address().HostName;
+		public static string LocalIPAddress => IPTools.getLocalIPv4Address().HostName;
 
 		public static async Task<NetworkDevice> Ping(string ipAddress)
 		{
 			return await Task.Run(() =>
 			{
 				InetAddress ia = InetAddress.GetByName(ipAddress);
-				PingResult pingResult = global::AndroidNetworkTools.Ping.onAddress(ia).setTimeOutMillis(2500).doPing();
+				PingResult pingResult = InternalDroidNetworkTools.Ping.onAddress(ia).setTimeOutMillis(2500).doPing();
 				if (pingResult.IsReachable)
 				{
 					Device device = new Device(ia);
@@ -92,23 +91,23 @@ namespace XamarinNetworkTools
 
 		#endregion
 
-		class SubnetCallbacks : OnSubnetDeviceFound
+		class SubnetCallbacks : SubnetDevices.OnSubnetDeviceFound
 		{
-			Action<global::AndroidNetworkTools.Subnet.Device> onDeviceFound;
+			Action<Device> onDeviceFound;
 			Action onFinished;
 
-			public SubnetCallbacks(Action<global::AndroidNetworkTools.Subnet.Device> onDeviceFound, Action onFinished)
+			public SubnetCallbacks(Action<Device> onDeviceFound, Action onFinished)
 			{
 				this.onDeviceFound = onDeviceFound;
 				this.onFinished = onFinished;
 			}
 
-			void OnSubnetDeviceFound.onDeviceFound(global::AndroidNetworkTools.Subnet.Device device)
+			void SubnetDevices.OnSubnetDeviceFound.onDeviceFound(Device device)
 			{
 				this.onDeviceFound(device);
 			}
 
-			void OnSubnetDeviceFound.onFinished(List<global::AndroidNetworkTools.Subnet.Device> devicesFound) => this.onFinished();
+			void SubnetDevices.OnSubnetDeviceFound.onFinished(List<Device> devicesFound) => this.onFinished();
 		}
 	}
 }
