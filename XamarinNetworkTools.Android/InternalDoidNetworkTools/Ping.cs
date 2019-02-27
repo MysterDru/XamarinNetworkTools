@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using InternalDroidNetworkTools._Ping;
 using Java.Lang;
 using Java.Net;
@@ -156,100 +158,6 @@ namespace InternalDroidNetworkTools
 			cancelled = false;
 			resolveAddressString();
 			return PingTools.doPing(address, pingOptions);
-		}
-
-		/**
-		 * Perform an asynchronous ping
-		 *
-		 * @param pingListener - the listener to fire PingResults to.
-		 * @return - this so we can cancel if needed
-		 */
-		public Ping doPing(PingListener pingListener)
-		{
-			new Java.Lang.Thread(new Runnable(() =>
-			{
-			try
-				{
-					resolveAddressString();
-				}
-				catch (UnknownHostException e)
-				{
-					pingListener.onError(e);
-					return;
-				}
-
-				if (address == null)
-				{
-					pingListener.onError(new NullPointerException("Address is null"));
-					return;
-				}
-
-				long pingsCompleted = 0;
-				long noLostPackets = 0;
-				float totalPingTime = 0;
-				float minPingTime = -1;
-				float maxPingTime = -1;
-
-				cancelled = false;
-				int noPings = times;
-
-				// times == 0 is the case that we can continuous scanning
-				while (noPings > 0 || times == 0)
-				{
-					PingResult pingResult = PingTools.doPing(address, pingOptions);
-
-					if (pingListener != null)
-					{
-						pingListener.onResult(pingResult);
-					}
-
-					// Update ping stats
-					pingsCompleted++;
-
-					if (pingResult.HasError)
-					{
-						noLostPackets++;
-					}
-					else
-					{
-						float timeTaken = pingResult.TimeTaken;
-						totalPingTime += timeTaken;
-						if (maxPingTime == -1 || timeTaken > maxPingTime) maxPingTime = timeTaken;
-						if (minPingTime == -1 || timeTaken < minPingTime) minPingTime = timeTaken;
-					}
-
-					noPings--;
-					if (cancelled) break;
-
-					try
-					{
-						Thread.Sleep(delayBetweenScansMillis);
-					}
-					catch (InterruptedException e)
-					{
-						e.PrintStackTrace();
-					}
-				}
-
-				if (pingListener != null)
-				{
-					pingListener.onFinished(new PingStats(address, pingsCompleted, noLostPackets, totalPingTime, minPingTime, maxPingTime));
-				}
-			})).Start();
-			//new Thread(new Runnable()
-			//{
-		//	@Override
-
-				//	public void run()
-				//	{
-
-				//		
-				//	}
-				//}).start();
-
-
-			return this;
-
 		}
 	}
 }

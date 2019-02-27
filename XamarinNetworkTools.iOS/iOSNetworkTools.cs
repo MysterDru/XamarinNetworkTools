@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MMLanScanBinding;
 
@@ -28,17 +29,17 @@ namespace XamarinNetworkTools
 
 		public static IObservable<NetworkDevice> FindDevicesOnNetwork()
 		{
-			return Observable.Create(async (IObserver<NetworkDevice> subscriber) =>
+			return Observable.Create(async (IObserver<NetworkDevice> subscriber, CancellationToken cancellationToken) =>
 			{
 				try
 				{
-					IEnumerable<string> localHosts = await Task.Run(() => iOSNetworkTools.GetAllHostsForLocalIP());
+					IEnumerable<string> localHosts = await Task.Run(() => iOSNetworkTools.GetAllHostsForLocalIP(), cancellationToken);
 
 					var pingTasks = localHosts.Select(x => Task.Run(async () =>
 					{
 						try
 						{
-							return await NetworkTools.Instance.Ping(x);
+							return await NetworkTools.Instance.Ping(x, cancellationToken);
 						}
 						catch (Exception ex)
 						{
@@ -57,57 +58,17 @@ namespace XamarinNetworkTools
 
 					subscriber.OnCompleted();
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					subscriber.OnError(ex);
 				}
-
-				//Console.WriteLine($"[XamarinNetworkTools] - Scan Started");
-				//var lanScanner = new MMLANScanner(new LanScannerCallbacks(
-				//	(MMDevice device) =>
-				//	{
-				//		Console.WriteLine("[XamarinNetworkTools] - Found new device: Device{" +
-				//			"ip='" + device.IpAddress + '\'' +
-				//			", hostname='" + device.Hostname + '\'' +
-				//			", mac='" + device.MacAddress + '\'' +
-				//			", isLocal=" + device.IsLocalDevice +
-				//			'}');
-
-				//		subscriber.OnNext(new NetworkDevice(device.IpAddress, string.IsNullOrWhiteSpace(device.Hostname) ? device.IpAddress : device.Hostname, device.MacAddress));
-				//	},
-				//	(status) =>
-				//	{
-				//		Console.WriteLine($"[XamarinNetworkTools] - Scan finished with status: {status}");
-				//		if (status == MMLanScannerStatus.Finished)
-				//			subscriber.OnCompleted();
-				//		else
-				//			subscriber.OnError(new OperationCanceledException("The scan was cancelled"));
-				//	},
-				//	() =>
-				//	{
-				//		Console.WriteLine($"[XamarinNetworkTools] - Scan failed with error: 'Unknown'");
-				//		subscriber.OnError(new ScanFailedException());
-				//	}
-				//));
-
-				//lanScanner.Start();
-
-				//return () =>
-				//{
-				//	Console.WriteLine($"[XamarinNetworkTools] - Disposing {nameof(FindDevicesOnNetwork)} observable");
-
-				//	/* dispose me */
-				//	lanScanner?.Stop();
-				//	lanScanner?.Dispose();
-				//};
 			});
 		}
 
-		public static async Task<NetworkDevice> Ping(string ipAddress)
+		public static async Task<NetworkDevice> Ping(string ipAddress, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			TaskCompletionSource<NetworkDevice> tcs = new TaskCompletionSource<NetworkDevice>();
-			await Task.Run(() =>
-			{
+
 				var ping = new PingOperation(ipAddress, (Foundation.NSError arg1, Foundation.NSString arg2) =>
 				{
 					if (arg1 != null)
@@ -118,7 +79,26 @@ namespace XamarinNetworkTools
 					}
 				});
 				ping.Start();
+
+
+			cancellationToken.Register(() =>
+			{
+				ping.Cancel();
+				tcs.TrySetCanceled();
 			});
+
+			//await Task.Run(() =>
+			//{
+			//	while (!tcs.Task.IsCompleted)
+			//	{
+			//		if (cancellationToken.IsCancellationRequested)
+			//		{
+			//			ping.Cancel();
+			//			tcs.TrySetCanceled();
+			//		}
+			//		Thread.Sleep(100);
+			//	}
+			//});
 
 			return await tcs.Task;
 		}
@@ -131,7 +111,7 @@ namespace XamarinNetworkTools
 
 		IEnumerable<string> INetworkTools.GetAllHostsForLocalIP() => iOSNetworkTools.GetAllHostsForLocalIP();
 
-		Task<NetworkDevice> INetworkTools.Ping(string ipAddress) => iOSNetworkTools.Ping(ipAddress);
+		Task<NetworkDevice> INetworkTools.Ping(string ipAddress, CancellationToken cancellationToken) => iOSNetworkTools.Ping(ipAddress, cancellationToken);
 
 		#endregion
 

@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using System.Reactive.Linq;
+using System.Threading;
 
 namespace XamarinNetworkTools.Sample
 {
 	public partial class MainPage : ContentPage
 	{
 		public ObservableCollection<NetworkDevice> Devices;
+		private CancellationTokenSource cancelToken;
 
 		public MainPage()
 		{
@@ -28,6 +30,12 @@ namespace XamarinNetworkTools.Sample
 			this.LoadData();
 		}
 
+		void Handle_Clicked(object sender, System.EventArgs e)
+		{
+			cancelToken?.Cancel();
+			cancelToken = null;
+		}
+
 		void Handle_Refreshing(object sender, System.EventArgs e)
 		{
 			this.LoadData();
@@ -35,18 +43,28 @@ namespace XamarinNetworkTools.Sample
 
 		async Task LoadData()
 		{
-			this.list.IsRefreshing = true;
-
-			this.Devices.Clear();
-
-			await NetworkTools.Instance
-				.FindDevicesOnNetwork()
-				.ForEachAsync((device) =>
+			using (this.cancelToken = new CancellationTokenSource())
+			{
+				try
 				{
-					this.Devices.Add(device);
-				});
+					this.list.IsRefreshing = true;
 
-			this.list.IsRefreshing = false;
+					this.Devices.Clear();
+
+					await NetworkTools.Instance
+						.FindDevicesOnNetwork()
+						.ForEachAsync((device) =>
+						{
+							this.Devices.Add(device);
+						}, cancelToken.Token);
+
+					this.list.IsRefreshing = false;
+				}
+				catch(OperationCanceledException)
+				{
+					this.list.IsRefreshing = false;
+				}
+			}
 		}
 	}
 }

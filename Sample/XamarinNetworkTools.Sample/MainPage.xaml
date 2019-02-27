@@ -6,6 +6,9 @@
     x:Class="XamarinNetworkTools.Sample.MainPage">
     <StackLayout>
         <!-- Place new controls here -->
+		<ContentView>
+			<Button Text="Cancel"  Clicked="Handle_Clicked"/>
+			</ContentView>
         <ListView
             x:Name="list"
             Refreshing="Handle_Refreshing"

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace XamarinNetworkTools
@@ -12,7 +13,7 @@ namespace XamarinNetworkTools
 
 		IEnumerable<string> GetAllHostsForLocalIP();
 
-		Task<NetworkDevice> Ping(string ipAddress);
+		Task<NetworkDevice> Ping(string ipAddress, CancellationToken cancellationToken = default(CancellationToken));
 
 	}
 }
