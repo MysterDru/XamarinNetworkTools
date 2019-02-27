@@ -13,33 +13,42 @@ namespace XamarinNetworkTools
 		{
 			return Observable.Create((IObserver<NetworkDevice> subscriber) =>
 			{
-				List<string> recievedIps = new List<string>();
+				Console.WriteLine($"[XamarinNetworkTools] - Scan Started");
 				var lanScanner = new MMLANScanner(new LanScannerCallbacks(
 					(MMDevice device) =>
 					{
-						if (!recievedIps.Contains(device.IpAddress))
-						{
-							recievedIps.Add(device.IpAddress);
-							subscriber.OnNext(new NetworkDevice(device.IpAddress, string.IsNullOrWhiteSpace(device.Hostname) ? device.IpAddress : device.Hostname, device.MacAddress));
-						}
+						Console.WriteLine("[XamarinNetworkTools] - Found new device: Device{" +
+							"ip='" + device.IpAddress + '\'' +
+							", hostname='" + device.Hostname + '\'' +
+							", mac='" + device.MacAddress + '\'' +
+							", isLocal=" + device.IsLocalDevice +
+							'}');
+
+						subscriber.OnNext(new NetworkDevice(device.IpAddress, string.IsNullOrWhiteSpace(device.Hostname) ? device.IpAddress : device.Hostname, device.MacAddress));
 					},
 					(status) =>
 					{
+						Console.WriteLine($"[XamarinNetworkTools] - Scan finished with status: {status}");
 						if (status == MMLanScannerStatus.Finished)
 							subscriber.OnCompleted();
 						else
 							subscriber.OnError(new OperationCanceledException("The scan was cancelled"));
 					},
-					() => { subscriber.OnError(new ScanFailedException()); }
+					() => {
+						Console.WriteLine($"[XamarinNetworkTools] - Scan failed with error: 'Unknown'");
+						subscriber.OnError(new ScanFailedException()); 
+					}
 				));
 
 				lanScanner.Start();
 
 				return () =>
 				{
+					Console.WriteLine($"[XamarinNetworkTools] - Disposing {nameof(FindDevicesOnNetwork)} observable");
+
 					/* dispose me */
-					lanScanner.Stop();
-					lanScanner.Dispose();
+					lanScanner?.Stop();
+					lanScanner?.Dispose();
 				};
 			});
 		}
@@ -57,6 +66,10 @@ namespace XamarinNetworkTools
 				this.onDeviceFound = onDeviceFound;
 				this.onFinished = onFinished;
 				this.onFailedToScan = onFailedToScan;
+			}
+
+			public override void LanScanProgressPinged(float pingedHosts, nint overallHosts)
+			{
 			}
 
 			public override void LanScanDidFailedToScan()

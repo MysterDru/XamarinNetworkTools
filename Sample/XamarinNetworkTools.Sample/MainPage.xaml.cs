@@ -39,7 +39,7 @@ namespace XamarinNetworkTools.Sample
 
 			this.Devices.Clear();
 
-			NetworkTools.FindDevicesOnNetwork()
+			await NetworkTools.FindDevicesOnNetwork()
 				.ForEachAsync((device) =>
 				{
 					this.Devices.Add(device);

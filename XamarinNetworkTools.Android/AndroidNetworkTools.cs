@@ -16,22 +16,25 @@ namespace XamarinNetworkTools
 		{
 			return Observable.Create((IObserver<NetworkDevice> subscriber) =>
 			{
-				List<string> recievedIps = new List<string>();
+				Console.WriteLine($"[XamarinNetworkTools] - Scan Started");
 				var scanner = SubnetDevices.fromLocalAddress()
 					.findDevices(new SubnetCallbacks((device) =>
 					{
-						if (!recievedIps.Contains(device.IP))
-						{
-							recievedIps.Add(device.IP);
-							subscriber.OnNext(new NetworkDevice(device.IP, string.IsNullOrEmpty(device.HostName) ? device.IP : device.HostName, device.MacAddress));
-						}
+						Console.WriteLine($"[XamarinNetworkTools] - Found new device: {device.ToString()}");
+						subscriber.OnNext(new NetworkDevice(device.IP, string.IsNullOrEmpty(device.HostName) ? device.IP : device.HostName, device.MacAddress));
 					},
-					() => { subscriber.OnCompleted(); }));
+					() =>
+					{
+						Console.WriteLine($"[XamarinNetworkTools] - Scan completed");
+						subscriber.OnCompleted();
+					}));
 
 				return () =>
 				{
+					Console.WriteLine($"[XamarinNetworkTools] - Disposing {nameof(FindDevicesOnNetwork)} observable");
+
 					/* dispose me */
-					scanner.Dispose();
+					scanner?.Dispose();
 				};
 			});
 		}
