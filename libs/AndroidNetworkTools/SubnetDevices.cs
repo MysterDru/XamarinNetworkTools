@@ -15,7 +15,8 @@ namespace AndroidNetworkTools
 	{
 		private int noThreads = 100;
 
-		private List<string> addresses;
+		public List<string> Addresses { get; private set; }
+
 		private ConcurrentStack<Device> devicesFound;
 		private OnSubnetDeviceFound listener;
 		private int timeOutMillis = 2500;
@@ -65,18 +66,18 @@ namespace AndroidNetworkTools
 
 			SubnetDevices subnetDevice = new SubnetDevices();
 
-			subnetDevice.addresses = new List<string>();
+			subnetDevice.Addresses = new List<string>();
 
 			// Get addresses from ARP Info first as they are likely to be reachable
-			subnetDevice.addresses.AddRange(ARPInfo.getAllIPAddressesInARPCache());
+			subnetDevice.Addresses.AddRange(ARPInfo.getAllIPAddressesInARPCache());
 
 			// Add all missing addresses in subnet
 			string segment = ipAddress.Substring(0, ipAddress.LastIndexOf('.') + 1);
 			for (int j = 0; j < 255; j++)
 			{
-				if (!subnetDevice.addresses.Contains(segment + j))
+				if (!subnetDevice.Addresses.Contains(segment + j))
 				{
-					subnetDevice.addresses.Add(segment + j);
+					subnetDevice.Addresses.Add(segment + j);
 				}
 			}
 
@@ -108,7 +109,7 @@ namespace AndroidNetworkTools
 
 				IExecutorService executor = Executors.NewFixedThreadPool(noThreads);
 
-				foreach (string add in addresses)
+				foreach (string add in Addresses)
 				{
 					IRunnable worker = new SubnetDeviceFinderRunnable(add, self);
 					executor.Execute(worker);

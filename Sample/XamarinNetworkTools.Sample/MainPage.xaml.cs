@@ -9,17 +9,17 @@ using System.Reactive.Linq;
 
 namespace XamarinNetworkTools.Sample
 {
-    public partial class MainPage : ContentPage
-    {
+	public partial class MainPage : ContentPage
+	{
 		public ObservableCollection<NetworkDevice> Devices;
 
-        public MainPage()
-        {
+		public MainPage()
+		{
 			Devices = new ObservableCollection<NetworkDevice>();
 			InitializeComponent();
 
 			this.list.ItemsSource = Devices;
-        }
+		}
 
 		protected override void OnAppearing()
 		{
@@ -39,14 +39,12 @@ namespace XamarinNetworkTools.Sample
 
 			this.Devices.Clear();
 
-			await NetworkTools.FindDevicesOnNetwork()
+			await NetworkTools.Instance
+				.FindDevicesOnNetwork()
 				.ForEachAsync((device) =>
 				{
 					this.Devices.Add(device);
 				});
-			//var things = await DependencyService.Get<IThingFinder>().FindThings();
-
-			//this.list.ItemsSource = things;
 
 			this.list.IsRefreshing = false;
 		}
