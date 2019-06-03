@@ -11,110 +11,118 @@ using Java.Net;
 
 namespace XamarinNetworkTools
 {
-	public sealed class AndroidNetworkTools : INetworkTools
-	{
-		public static void Init() { }
+    [Android.Runtime.Preserve(AllMembers = true)]
+    public sealed class AndroidNetworkTools : INetworkTools
+    {
+        public static void Init()
+        {
+            XamarinNetworkTools.NetworkTools.Init<AndroidNetworkTools>();
+        }
 
-		public static string LocalIPAddress => IPTools.getLocalIPv4Address().HostName;
+        public static bool IsSupported => true;
 
-		public static async Task<NetworkDevice> Ping(string ipAddress, CancellationToken cancellationToken)
-		{
-			return await Task.Run(() =>
-			{
-					InetAddress ia = InetAddress.GetByName(ipAddress);
-					PingResult pingResult = InternalDroidNetworkTools.Ping.onAddress(ia).setTimeOutMillis(2500).doPing();
-					if (pingResult.IsReachable)
-					{
-						Device device = new Device(ia);
+        public static string LocalIPAddress => IPTools.getLocalIPv4Address().HostName;
 
-						return new NetworkDevice(device.IP, device.HostName, device.MacAddress);
-					}
-					else
-					{
-						throw new Exception(pingResult.Error);
-					}
-			}, cancellationToken);
-		}
+        public static async Task<NetworkDevice> Ping(string ipAddress, CancellationToken cancellationToken)
+        {
+            return await Task.Run(() =>
+            {
+                InetAddress ia = InetAddress.GetByName(ipAddress);
+                PingResult pingResult = InternalDroidNetworkTools.Ping.onAddress(ia).setTimeOutMillis(2500).doPing();
+                if (pingResult.IsReachable)
+                {
+                    Device device = new Device(ia);
 
-		public static IEnumerable<string> GetAllHostsForLocalIP()
-		{
-			return SubnetDevices.fromIPAddress(LocalIPAddress)
-				.Addresses;
-		}
+                    return new NetworkDevice(device.IP, device.HostName, device.MacAddress);
+                }
+                else
+                {
+                    throw new Exception(pingResult.Error);
+                }
+            }, cancellationToken);
+        }
 
-		public static IObservable<NetworkDevice> FindDevicesOnNetwork()
-		{
-			return Observable.Create(async (IObserver<NetworkDevice> subscriber, CancellationToken cancellationToken) =>
-			{
-				try
-				{
-					IEnumerable<string> localHosts = await Task.Run(() => AndroidNetworkTools.GetAllHostsForLocalIP(), cancellationToken);
+        public static IEnumerable<string> GetAllHostsForLocalIP()
+        {
+            return SubnetDevices.fromIPAddress(LocalIPAddress)
+                .Addresses;
+        }
 
-					var pingTasks = localHosts.Select(x => Task.Run(async () =>
-					{
-						try
-						{
-							var device = await NetworkTools.Instance.Ping(x, cancellationToken);
+        public static IObservable<NetworkDevice> FindDevicesOnNetwork()
+        {
+            return Observable.Create(async (IObserver<NetworkDevice> subscriber, CancellationToken cancellationToken) =>
+            {
+                try
+                {
+                    IEnumerable<string> localHosts = await Task.Run(() => AndroidNetworkTools.GetAllHostsForLocalIP(), cancellationToken);
+
+                    var pingTasks = localHosts.Select(x => Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var device = await NetworkTools.Instance.Ping(x, cancellationToken);
 
 #if DEBUG
-							Console.WriteLine($"Ping completed: {device.IP } | {device.HostName } | { device.MacAddress}");
+                            Console.WriteLine($"Ping completed: {device.IP } | {device.HostName } | { device.MacAddress}");
 #endif
 
-							return device;
-						}
-						catch
-						{
-							return (NetworkDevice)null;
-						}
-					}, cancellationToken)).ToList();
+                            return device;
+                        }
+                        catch
+                        {
+                            return (NetworkDevice)null;
+                        }
+                    }, cancellationToken)).ToList();
 
-					while (pingTasks.Count > 0)
-					{
-						var task = await Task.WhenAny(pingTasks);
-						pingTasks.Remove(task);
+                    while (pingTasks.Count > 0)
+                    {
+                        var task = await Task.WhenAny(pingTasks);
+                        pingTasks.Remove(task);
 
-						if (task.Result != null)
-							subscriber.OnNext(task.Result);
-					}
+                        if (task.Result != null)
+                            subscriber.OnNext(task.Result);
+                    }
 
-					subscriber.OnCompleted();
-				}
-				catch (Exception ex)
-				{
-					subscriber.OnError(ex);
-				}
-			});
-		}
+                    subscriber.OnCompleted();
+                }
+                catch (Exception ex)
+                {
+                    subscriber.OnError(ex);
+                }
+            });
+        }
 
-		#region INetworkTools Implementation
+        #region INetworkTools Implementation
 
-		IObservable<NetworkDevice> INetworkTools.FindDevicesOnNetwork() => AndroidNetworkTools.FindDevicesOnNetwork();
+        bool INetworkTools.IsSupported => AndroidNetworkTools.IsSupported;
 
-		string INetworkTools.LocalIPAddress => AndroidNetworkTools.LocalIPAddress;
+        IObservable<NetworkDevice> INetworkTools.FindDevicesOnNetwork() => AndroidNetworkTools.FindDevicesOnNetwork();
 
-		IEnumerable<string> INetworkTools.GetAllHostsForLocalIP() => AndroidNetworkTools.GetAllHostsForLocalIP();
+        string INetworkTools.LocalIPAddress => AndroidNetworkTools.LocalIPAddress;
 
-		Task<NetworkDevice> INetworkTools.Ping(string ipAddress, CancellationToken cancellationToken) => AndroidNetworkTools.Ping(ipAddress, cancellationToken);
+        IEnumerable<string> INetworkTools.GetAllHostsForLocalIP() => AndroidNetworkTools.GetAllHostsForLocalIP();
 
-		#endregion
+        Task<NetworkDevice> INetworkTools.Ping(string ipAddress, CancellationToken cancellationToken) => AndroidNetworkTools.Ping(ipAddress, cancellationToken);
 
-		class SubnetCallbacks : SubnetDevices.OnSubnetDeviceFound
-		{
-			Action<Device> onDeviceFound;
-			Action onFinished;
+        #endregion
 
-			public SubnetCallbacks(Action<Device> onDeviceFound, Action onFinished)
-			{
-				this.onDeviceFound = onDeviceFound;
-				this.onFinished = onFinished;
-			}
+        class SubnetCallbacks : SubnetDevices.OnSubnetDeviceFound
+        {
+            Action<Device> onDeviceFound;
+            Action onFinished;
 
-			void SubnetDevices.OnSubnetDeviceFound.onDeviceFound(Device device)
-			{
-				this.onDeviceFound(device);
-			}
+            public SubnetCallbacks(Action<Device> onDeviceFound, Action onFinished)
+            {
+                this.onDeviceFound = onDeviceFound;
+                this.onFinished = onFinished;
+            }
 
-			void SubnetDevices.OnSubnetDeviceFound.onFinished(List<Device> devicesFound) => this.onFinished();
-		}
-	}
+            void SubnetDevices.OnSubnetDeviceFound.onDeviceFound(Device device)
+            {
+                this.onDeviceFound(device);
+            }
+
+            void SubnetDevices.OnSubnetDeviceFound.onFinished(List<Device> devicesFound) => this.onFinished();
+        }
+    }
 }

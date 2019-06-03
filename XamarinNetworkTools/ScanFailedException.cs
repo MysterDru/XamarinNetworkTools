@@ -1,7 +1,7 @@
 ﻿using System;
 namespace XamarinNetworkTools
 {
-	public class ScanFailedException : Exception
+	public class ScanFailedException : NetworkToolsException
 	{
 		public ScanFailedException()
 		{

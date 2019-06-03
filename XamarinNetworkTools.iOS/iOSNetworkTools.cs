@@ -8,144 +8,160 @@ using MMLanScanBinding;
 
 namespace XamarinNetworkTools
 {
-	public class iOSNetworkTools : INetworkTools
-	{
-		public static void Init() { }
+    [Foundation.Preserve(AllMembers = true)]
+    public class iOSNetworkTools : INetworkTools
+    {
+        public static void Init()
+        {
+            XamarinNetworkTools.NetworkTools.Init<iOSNetworkTools>();
+        }
 
-		public static string LocalIPAddress => LANProperties.LocalIPAddress?.IpAddress;
+        public static bool IsSupported
+        {
+            get
+            {
+                bool isSim = ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR;
 
-		public static IEnumerable<string> GetAllHostsForLocalIP()
-		{
-			var localDevice = LANProperties.LocalIPAddress;
+                return !isSim;
+            }
+        }
 
-			var ipsToPing = LANProperties.GetAllHostsForIP(localDevice.IpAddress, localDevice.SubnetMask);
+        public static string LocalIPAddress => LANProperties.LocalIPAddress?.IpAddress;
 
-			List<string> toReturn = new List<string>();
-			foreach (var ip in ipsToPing)
-				toReturn.Add(ip.ToString());
+        public static IEnumerable<string> GetAllHostsForLocalIP()
+        {
+            var localDevice = LANProperties.LocalIPAddress;
 
-			return toReturn;
-		}
+            var ipsToPing = LANProperties.GetAllHostsForIP(localDevice.IpAddress, localDevice.SubnetMask);
 
-		public static IObservable<NetworkDevice> FindDevicesOnNetwork()
-		{
-			return Observable.Create(async (IObserver<NetworkDevice> subscriber, CancellationToken cancellationToken) =>
-			{
-				try
-				{
-					IEnumerable<string> localHosts = await Task.Run(() => iOSNetworkTools.GetAllHostsForLocalIP(), cancellationToken);
+            List<string> toReturn = new List<string>();
+            foreach (var ip in ipsToPing)
+                toReturn.Add(ip.ToString());
 
-					var pingTasks = localHosts.Select(x => Task.Run(async () =>
-					{
-						try
-						{
-							return await NetworkTools.Instance.Ping(x, cancellationToken);
-						}
-						catch (Exception ex)
-						{
-							return (NetworkDevice)null;
-						}
-					})).ToList();
+            return toReturn;
+        }
 
-					while (pingTasks.Count > 0)
-					{
-						var task = await Task.WhenAny(pingTasks);
-						pingTasks.Remove(task);
+        public static IObservable<NetworkDevice> FindDevicesOnNetwork()
+        {
+            return Observable.Create(async (IObserver<NetworkDevice> subscriber, CancellationToken cancellationToken) =>
+            {
+                try
+                {
+                    IEnumerable<string> localHosts = await Task.Run(() => iOSNetworkTools.GetAllHostsForLocalIP(), cancellationToken);
 
-						if (task.Result != null)
-							subscriber.OnNext(task.Result);
-					}
+                    var pingTasks = localHosts.Select(x => Task.Run(async () =>
+                    {
+                        try
+                        {
+                            return await NetworkTools.Instance.Ping(x, cancellationToken);
+                        }
+                        catch (Exception ex)
+                        {
+                            return (NetworkDevice)null;
+                        }
+                    })).ToList();
 
-					subscriber.OnCompleted();
-				}
-				catch (Exception ex)
-				{
-					subscriber.OnError(ex);
-				}
-			});
-		}
+                    while (pingTasks.Count > 0)
+                    {
+                        var task = await Task.WhenAny(pingTasks);
+                        pingTasks.Remove(task);
 
-		public static async Task<NetworkDevice> Ping(string ipAddress, CancellationToken cancellationToken = default(CancellationToken))
-		{
-			TaskCompletionSource<NetworkDevice> tcs = new TaskCompletionSource<NetworkDevice>();
+                        if (task.Result != null)
+                            subscriber.OnNext(task.Result);
+                    }
 
-				var ping = new PingOperation(ipAddress, (Foundation.NSError arg1, Foundation.NSString arg2) =>
-				{
-					if (arg1 != null)
-						tcs.TrySetException(new Exception(arg1.Description));
-					else
-					{
-						tcs.TrySetResult(new NetworkDevice(ipAddress, ipAddress, null));
-					}
-				});
-				ping.Start();
+                    subscriber.OnCompleted();
+                }
+                catch (Exception ex)
+                {
+                    subscriber.OnError(ex);
+                }
+            });
+        }
+
+        public static async Task<NetworkDevice> Ping(string ipAddress, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            TaskCompletionSource<NetworkDevice> tcs = new TaskCompletionSource<NetworkDevice>();
+
+            var ping = new PingOperation(ipAddress, (Foundation.NSError arg1, Foundation.NSString arg2) =>
+            {
+                if (arg1 != null)
+                    tcs.TrySetException(new Exception(arg1.Description));
+                else
+                {
+                    tcs.TrySetResult(new NetworkDevice(ipAddress, ipAddress, null));
+                }
+            });
+            ping.Start();
 
 
-			cancellationToken.Register(() =>
-			{
-				ping.Cancel();
-				tcs.TrySetCanceled();
-			});
+            cancellationToken.Register(() =>
+            {
+                ping.Cancel();
+                tcs.TrySetCanceled();
+            });
 
-			//await Task.Run(() =>
-			//{
-			//	while (!tcs.Task.IsCompleted)
-			//	{
-			//		if (cancellationToken.IsCancellationRequested)
-			//		{
-			//			ping.Cancel();
-			//			tcs.TrySetCanceled();
-			//		}
-			//		Thread.Sleep(100);
-			//	}
-			//});
+            //await Task.Run(() =>
+            //{
+            //	while (!tcs.Task.IsCompleted)
+            //	{
+            //		if (cancellationToken.IsCancellationRequested)
+            //		{
+            //			ping.Cancel();
+            //			tcs.TrySetCanceled();
+            //		}
+            //		Thread.Sleep(100);
+            //	}
+            //});
 
-			return await tcs.Task;
-		}
+            return await tcs.Task;
+        }
 
-		#region INetworkTools implementation
+        #region INetworkTools implementation
 
-		IObservable<NetworkDevice> INetworkTools.FindDevicesOnNetwork() => iOSNetworkTools.FindDevicesOnNetwork();
+        bool INetworkTools.IsSupported => iOSNetworkTools.IsSupported;
 
-		string INetworkTools.LocalIPAddress => iOSNetworkTools.LocalIPAddress;
+        IObservable<NetworkDevice> INetworkTools.FindDevicesOnNetwork() => iOSNetworkTools.FindDevicesOnNetwork();
 
-		IEnumerable<string> INetworkTools.GetAllHostsForLocalIP() => iOSNetworkTools.GetAllHostsForLocalIP();
+        string INetworkTools.LocalIPAddress => iOSNetworkTools.LocalIPAddress;
 
-		Task<NetworkDevice> INetworkTools.Ping(string ipAddress, CancellationToken cancellationToken) => iOSNetworkTools.Ping(ipAddress, cancellationToken);
+        IEnumerable<string> INetworkTools.GetAllHostsForLocalIP() => iOSNetworkTools.GetAllHostsForLocalIP();
 
-		#endregion
+        Task<NetworkDevice> INetworkTools.Ping(string ipAddress, CancellationToken cancellationToken) => iOSNetworkTools.Ping(ipAddress, cancellationToken);
 
-		private class LanScannerCallbacks : MMLANScannerDelegate
-		{
-			Action<MMDevice> onDeviceFound;
-			Action<MMLanScannerStatus> onFinished;
-			Action onFailedToScan;
+        #endregion
 
-			public LanScannerCallbacks(Action<MMDevice> onDeviceFound, Action<MMLanScannerStatus> onFinished, Action onFailedToScan)
-			{
-				this.onDeviceFound = onDeviceFound;
-				this.onFinished = onFinished;
-				this.onFailedToScan = onFailedToScan;
-			}
+        private class LanScannerCallbacks : MMLANScannerDelegate
+        {
+            Action<MMDevice> onDeviceFound;
+            Action<MMLanScannerStatus> onFinished;
+            Action onFailedToScan;
 
-			public override void LanScanProgressPinged(float pingedHosts, nint overallHosts)
-			{
-			}
+            public LanScannerCallbacks(Action<MMDevice> onDeviceFound, Action<MMLanScannerStatus> onFinished, Action onFailedToScan)
+            {
+                this.onDeviceFound = onDeviceFound;
+                this.onFinished = onFinished;
+                this.onFailedToScan = onFailedToScan;
+            }
 
-			public override void LanScanDidFailedToScan()
-			{
-				this.onFailedToScan();
-			}
+            public override void LanScanProgressPinged(float pingedHosts, nint overallHosts)
+            {
+            }
 
-			public override void LanScanDidFindNewDevice(MMLanScanBinding.MMDevice device)
-			{
-				this.onDeviceFound(device);
-			}
+            public override void LanScanDidFailedToScan()
+            {
+                this.onFailedToScan();
+            }
 
-			public override void LanScanDidFinishScanningWithStatus(MMLanScannerStatus status)
-			{
-				this.onFinished(status);
-			}
-		}
-	}
+            public override void LanScanDidFindNewDevice(MMLanScanBinding.MMDevice device)
+            {
+                this.onDeviceFound(device);
+            }
+
+            public override void LanScanDidFinishScanningWithStatus(MMLanScannerStatus status)
+            {
+                this.onFinished(status);
+            }
+        }
+    }
 }

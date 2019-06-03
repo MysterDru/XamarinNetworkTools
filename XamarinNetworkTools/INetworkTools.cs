@@ -7,6 +7,8 @@ namespace XamarinNetworkTools
 {
 	public interface INetworkTools
 	{
+        bool IsSupported { get; }
+
 		IObservable<NetworkDevice> FindDevicesOnNetwork();
 
 		string LocalIPAddress { get; }
@@ -14,6 +16,5 @@ namespace XamarinNetworkTools
 		IEnumerable<string> GetAllHostsForLocalIP();
 
 		Task<NetworkDevice> Ping(string ipAddress, CancellationToken cancellationToken = default(CancellationToken));
-
 	}
 }
